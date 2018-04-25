@@ -72,8 +72,8 @@ namespace OnlineSignIn
             }
 
             var connectionString = Environment.GetEnvironmentVariable("AzureSignalRConnectionString");
-            var proxy = CloudSignalR.CreateHubProxyFromConnectionString(connectionString, "chat");
-            await proxy.Clients.All.SendAsync("broadcastMessage", new object[] { "_BROADCAST_", $"Current time is: {DateTime.Now}" });
+            var proxy = CloudSignalR.CreateHubProxyFromConnectionString(connectionString, "signIn");
+            await proxy.Clients.All.SendAsync("updateSignInStats", new object[] { result });
 
             return req.CreateResponse(HttpStatusCode.OK, result, "application/json");
         }
