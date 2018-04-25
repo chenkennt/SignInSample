@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json.schemastore.org/proxies",
+    "proxies": {
+        "signin": {
+            "matchCondition": {
+                "route": "signin",
+                "methods": [
+                    "GET",
+                    "POST"
+                ]
+            },
+            "backendUri": "https://%WEBSITE_HOSTNAME%/api/signin"
+        },
+        "getscores": {
+            "matchCondition": {
+                "route": "getscores",
+                "methods": [
+                    "GET",
+                    "POST",
+                    "OPTIONS"
+                ]
+            },
+            "backendUri": "https://%WEBSITE_HOSTNAME%/api/GetCurrentScore"
+        },
+        "incrementpoint": {
+            "matchCondition": {
+                "route": "incrementpoint",
+                "methods": [
+                    "POST",
+                    "OPTIONS"
+                ]
+            },
+            "backendUri": "https://%WEBSITE_HOSTNAME%/api/IncrementPointTrigger"
+        },
+        "root": {
+            "matchCondition": {
+                "route": "/{restOfPath}"
+            },
+            "backendUri": "https://%mycontainer_uri%/content/{restOfPath}"
+        },
+        "createteams": {
+            "matchCondition": {
+                "route": "/createteams",
+                "methods": [
+                    "GET",
+                    "POST",
+                    "OPTIONS"
+                ]
+            },
+            "backendUri": "https://%WEBSITE_HOSTNAME%/api/CreateTeamSettings"
+        },
+        "getsettings": {
+            "matchCondition": {
+                "route": "/getsettings",
+                "methods": [
+                    "GET",
+                    "OPTIONS"
+                ]
+            },
+            "backendUri": "https://%WEBSITE_HOSTNAME%/api/GetTeamSettings"
+        },
+        "default": {
+            "matchCondition": {
+                "route": "/",
+                "methods": [
+                    "GET",
+                    "OPTIONS"
+                ]
+            },
+            "backendUri": "https://%mycontainer_uri%/content/index.html"
+        }
+    }
+}

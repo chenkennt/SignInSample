@@ -9,6 +9,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.SignalR;
 
 namespace OnlineSignIn
 {
@@ -69,6 +70,10 @@ namespace OnlineSignIn
                 result.byBrowser[info.Browser]++;
                 result.byOS[info.OS]++;
             }
+
+            var connectionString = Environment.GetEnvironmentVariable("AzureSignalRConnectionString");
+            var proxy = CloudSignalR.CreateHubProxyFromConnectionString(connectionString, "chat");
+            await proxy.Clients.All.SendAsync("broadcastMessage", new object[] { "_BROADCAST_", $"Current time is: {DateTime.Now}" });
 
             return req.CreateResponse(HttpStatusCode.OK, result, "application/json");
         }
