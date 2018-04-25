@@ -9,7 +9,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.Azure.SignalR;
 
 namespace OnlineSignIn
 {
@@ -38,6 +37,12 @@ namespace OnlineSignIn
         public Dictionary<string, int> byBrowser = new Dictionary<string, int>();
     }
 
+    class SignInResult
+    {
+        public AuthInfo AuthInfo;
+        public SignInStats Stats;
+    }
+
     public static class SignInFunction
     {
         [FunctionName("signin")]
@@ -55,25 +60,28 @@ namespace OnlineSignIn
             var account = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("TableConnectionString"));
             var client = account.CreateCloudTableClient();
             var table = client.GetTableReference("SignInInfo");
-            // Insert sign-in info
             var newInfo = new SignInInfo(os, browser);
             var insert = TableOperation.Insert(newInfo);
             table.Execute(insert);
 
             var query = new TableQuery<SignInInfo>();
-            var result = new SignInStats();
+            var stats = new SignInStats();
             foreach (var info in table.ExecuteQuery(query))
             {
-                result.totalNumber++;
-                if (!result.byBrowser.ContainsKey(info.Browser)) result.byBrowser[info.Browser] = 0;
-                if (!result.byOS.ContainsKey(info.OS)) result.byOS[info.OS] = 0;
-                result.byBrowser[info.Browser]++;
-                result.byOS[info.OS]++;
+                stats.totalNumber++;
+                if (!stats.byBrowser.ContainsKey(info.Browser)) stats.byBrowser[info.Browser] = 0;
+                if (!stats.byOS.ContainsKey(info.OS)) stats.byOS[info.OS] = 0;
+                stats.byBrowser[info.Browser]++;
+                stats.byOS[info.OS]++;
             }
 
-            var connectionString = Environment.GetEnvironmentVariable("AzureSignalRConnectionString");
-            var proxy = CloudSignalR.CreateHubProxyFromConnectionString(connectionString, "signIn");
-            await proxy.Clients.All.SendAsync("updateSignInStats", new object[] { result });
+            var result = new SignInResult()
+            {
+                AuthInfo = SignInHub.GetAuthInfo(),
+                Stats = stats
+            };
+
+            await SignInHub.UpdateSignInStats(stats);
 
             return req.CreateResponse(HttpStatusCode.OK, result, "application/json");
         }
