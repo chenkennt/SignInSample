@@ -3,7 +3,7 @@
     "proxies": {
         "signinproxy": {
             "matchCondition": {
-                "route": "signin",
+                "route": "/signin",
                 "methods": [
                     "GET",
                     "POST"
@@ -11,53 +11,15 @@
             },
             "backendUri": "https://%WEBSITE_HOSTNAME%/api/signin"
         },
-        "getscores": {
+        "scripts": {
             "matchCondition": {
-                "route": "getscores",
-                "methods": [
-                    "GET",
-                    "POST",
-                    "OPTIONS"
-                ]
-            },
-            "backendUri": "https://%WEBSITE_HOSTNAME%/api/GetCurrentScore"
-        },
-        "incrementpoint": {
-            "matchCondition": {
-                "route": "incrementpoint",
-                "methods": [
-                    "POST",
-                    "OPTIONS"
-                ]
-            },
-            "backendUri": "https://%WEBSITE_HOSTNAME%/api/IncrementPointTrigger"
-        },
-        "root": {
-            "matchCondition": {
-                "route": "/{restOfPath}"
-            },
-            "backendUri": "https://%mycontainer_uri%/content/{restOfPath}"
-        },
-        "createteams": {
-            "matchCondition": {
-                "route": "/createteams",
-                "methods": [
-                    "GET",
-                    "POST",
-                    "OPTIONS"
-                ]
-            },
-            "backendUri": "https://%WEBSITE_HOSTNAME%/api/CreateTeamSettings"
-        },
-        "getsettings": {
-            "matchCondition": {
-                "route": "/getsettings",
+                "route": "/scripts/{*rest}",
                 "methods": [
                     "GET",
                     "OPTIONS"
                 ]
             },
-            "backendUri": "https://%WEBSITE_HOSTNAME%/api/GetTeamSettings"
+            "backendUri": "https://%blob_url%/content/scripts/{rest}"
         },
         "default": {
             "matchCondition": {
@@ -67,7 +29,7 @@
                     "OPTIONS"
                 ]
             },
-            "backendUri": "https://%mycontainer_uri%/content/index.html"
+            "backendUri": "https://%blob_url%/content/index.html"
         }
     }
 }
