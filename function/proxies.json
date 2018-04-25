@@ -3,7 +3,7 @@
     "proxies": {
         "signin": {
             "matchCondition": {
-                "route": "signin",
+                "route": "signinproxy",
                 "methods": [
                     "GET",
                     "POST"
