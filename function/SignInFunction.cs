@@ -9,6 +9,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using UAParser;
 
 namespace OnlineSignIn
 {
@@ -48,6 +49,11 @@ namespace OnlineSignIn
         [FunctionName("signin")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")]HttpRequestMessage req, TraceWriter log)
         {
+            var ua = Parser.GetDefault().Parse(req.Headers.UserAgent.ToString());
+            var os = ua.OS.Family;
+            var browser = ua.UserAgent.Family;
+
+            /*
             var os = req.GetQueryNameValuePairs().FirstOrDefault(q => q.Key == "os").Value;
             var browser = req.GetQueryNameValuePairs().FirstOrDefault(q => q.Key == "browser").Value;
             dynamic data = await req.Content.ReadAsAsync<object>();
@@ -55,7 +61,7 @@ namespace OnlineSignIn
             browser = browser ?? data?.browser;
 
             if (os == null) return req.CreateErrorResponse(HttpStatusCode.BadRequest, "Missing os");
-            if (browser == null) return req.CreateErrorResponse(HttpStatusCode.BadRequest, "Missing browser");
+            if (browser == null) return req.CreateErrorResponse(HttpStatusCode.BadRequest, "Missing browser");*/
 
             var account = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("TableConnectionString"));
             var client = account.CreateCloudTableClient();
