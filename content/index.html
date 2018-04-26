@@ -9,32 +9,27 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
     crossorigin="anonymous">
-  <style>
-    .center-text {
-      text-align: center;
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
 
-  <title>Online Sign-in</title>
+  <title>Azure SignalR Sign-in Sample</title>
 </head>
 
 <body>
-  <div id="main" class="container hidden">
+  <div id="main" class="container collapse">
     <div class="row">
       <div class="col-12">
-        <h1 class="center-text"><span id="count"></span> people have visited this page!</h1>
+        <h1 class="text-center"><span id="count"></span> people have visited this page!</h1>
       </div>
     </div>
     <div class="row">
-      <div class="col-6">
+      <div class="col-12 col-lg-6">
         <canvas id="chartByOS" width="400" height="400"></canvas>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-lg-6">
         <canvas id="chartByBrowser" width="400" height="400"></canvas>
       </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-2"><div id="qrcode" class="d-none d-lg-block"></div></div>
     </div>
   </div>
 
@@ -49,6 +44,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.3.0"></script>
   <script src="scripts/signalr.min.js"></script>
+  <script src="scripts/qrcode.min.js"></script>
   <script>
     var chartByOS, chartByBrowser;
 
@@ -187,7 +183,9 @@
       connection.on('updateSignInStats', updatePage);
     }
 
-    signIn("/api/signin")
+    new QRCode(document.getElementById("qrcode"), window.location.href);
+    signIn("https://kenchensigninfun2.azurewebsites.net/signin")
+    // signIn("/signin")
       .then(function (result) {
         initPage(result.Stats);
         return startConnection(result.AuthInfo.ServiceUrl, result.AuthInfo.AccessToken, bindConnectionMessage);
